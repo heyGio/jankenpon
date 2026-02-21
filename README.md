@@ -14,7 +14,7 @@ Draw-kenpon is a fast-paced, strategic twist on the traditional game of Rock, Pa
    ```bash
    python3 -m venv .venv
    source .venv/bin/activate
-   pip install fastapi uvicorn websockets google-generativeai pydantic
+   pip install fastapi uvicorn websockets google-generativeai pydantic pillow
    ```
 3. Set your Gemini API key in the environment:
    ```bash
