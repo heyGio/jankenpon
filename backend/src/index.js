@@ -13,6 +13,10 @@ const server = http.createServer(app);
 app.use(cors());
 app.use(express.json());
 
+app.get('/', (req, res) => {
+    res.json({ message: 'Welcome to the Jankenpon API' });
+});
+
 const io = new Server(server, {
     cors: {
         origin: '*',
