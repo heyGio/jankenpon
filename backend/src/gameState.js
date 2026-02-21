@@ -12,7 +12,7 @@ function createMatch() {
     scores: { A: 0, B: 0 },
     streaks: { A_losses: 0, B_losses: 0, ties: 0 },
     jolly: { A_typed_turns: 0, B_typed_turns: 0 },
-    round: { timer_ms: 30000, A_label: null, B_label: null, ready: { A: false, B: false } },
+    round: { roundId: 1, timer_ms: 30000, A_label: null, B_label: null, ready: { A: false, B: false } },
     players: { A: null, B: null }, // socket ids
     names: { A: null, B: null } // player names
   });
@@ -45,6 +45,7 @@ function resetRound(match) {
   match.round.B_label = null;
   match.round.ready.A = false;
   match.round.ready.B = false;
+  match.round.roundId = (match.round.roundId || 1) + 1;
 }
 
 module.exports = {

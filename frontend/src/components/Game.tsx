@@ -44,7 +44,7 @@ export default function Game({ gameState, playerSlot, matchCode, roundResult }: 
         }, 1000);
 
         return () => clearInterval(interval);
-    }, [gameState.round, roundResult]);
+    }, [gameState.round.roundId, roundResult]);
 
     const handleTimeUp = () => {
         if (!submitted) {
@@ -155,34 +155,28 @@ export default function Game({ gameState, playerSlot, matchCode, roundResult }: 
                     </div>
 
                     <div className="flex-1 bg-white relative min-h-[400px]">
-                        {submitted ? (
-                            <div className="absolute inset-0 bg-slate-900/90 flex flex-col items-center justify-center p-6 text-center z-10">
-                                <div className="w-16 h-16 bg-indigo-500/20 rounded-full flex items-center justify-center mb-4">
-                                    <Send className="w-8 h-8 text-indigo-400" />
+                        {/* Container for canvas so it doesn't disappear */}
+                        <div className={`absolute inset-0 ${submitted ? 'pointer-events-none opacity-50' : ''}`}>
+                            {isJollyMode ? (
+                                <div className="absolute inset-0 bg-slate-800 flex flex-col items-center justify-center p-8">
+                                    <Edit3 className="w-12 h-12 text-pink-400 mb-6 opacity-80" />
+                                    <h3 className="text-xl font-bold text-white mb-4 text-center">Type your object instead!</h3>
+                                    <form onSubmit={handleSubmitText} className="w-full max-w-sm flex gap-2">
+                                        <input
+                                            type="text"
+                                            value={jollyText}
+                                            onChange={e => setJollyText(e.target.value)}
+                                            placeholder="e.g. black hole"
+                                            className="flex-1 bg-slate-900 border border-slate-700 rounded-lg px-4 py-3 text-white focus:outline-none focus:ring-2 focus:ring-pink-500"
+                                            autoFocus
+                                            disabled={submitted}
+                                        />
+                                        <button type="submit" disabled={submitted} className="bg-pink-600 hover:bg-pink-500 text-white px-4 py-3 rounded-lg font-bold transition disabled:opacity-50">
+                                            Submit
+                                        </button>
+                                    </form>
                                 </div>
-                                <h3 className="text-xl font-bold text-white mb-2">Sent to AI Referee</h3>
-                                <p className="text-slate-400">Waiting for opponent and adjudication...</p>
-                            </div>
-                        ) : isJollyMode ? (
-                            <div className="absolute inset-0 bg-slate-800 flex flex-col items-center justify-center p-8">
-                                <Edit3 className="w-12 h-12 text-pink-400 mb-6 opacity-80" />
-                                <h3 className="text-xl font-bold text-white mb-4 text-center">Type your object instead!</h3>
-                                <form onSubmit={handleSubmitText} className="w-full max-w-sm flex gap-2">
-                                    <input
-                                        type="text"
-                                        value={jollyText}
-                                        onChange={e => setJollyText(e.target.value)}
-                                        placeholder="e.g. black hole"
-                                        className="flex-1 bg-slate-900 border border-slate-700 rounded-lg px-4 py-3 text-white focus:outline-none focus:ring-2 focus:ring-pink-500"
-                                        autoFocus
-                                    />
-                                    <button type="submit" className="bg-pink-600 hover:bg-pink-500 text-white px-4 py-3 rounded-lg font-bold transition">
-                                        Submit
-                                    </button>
-                                </form>
-                            </div>
-                        ) : (
-                            <div className="absolute inset-0">
+                            ) : (
                                 <SignatureCanvas
                                     ref={sigCanvas}
                                     penColor="black"
@@ -191,6 +185,17 @@ export default function Game({ gameState, playerSlot, matchCode, roundResult }: 
                                     maxWidth={8}
                                     canvasProps={{ className: "w-full h-full cursor-crosshair" }}
                                 />
+                            )}
+                        </div>
+
+                        {/* Overlay when submitted */}
+                        {submitted && (
+                            <div className="absolute inset-0 bg-slate-900/80 backdrop-blur-sm flex flex-col items-center justify-center p-6 text-center z-10 transition-all duration-300">
+                                <div className="w-16 h-16 bg-indigo-500/20 rounded-full flex items-center justify-center mb-4">
+                                    <Send className="w-8 h-8 text-indigo-400 animate-pulse" />
+                                </div>
+                                <h3 className="text-xl font-bold text-white mb-2 tracking-wide text-shadow-sm">Waiting for opponent and Judge</h3>
+                                <p className="text-indigo-200/80 font-medium">Please stand by while the AI evaluates...</p>
                             </div>
                         )}
                     </div>

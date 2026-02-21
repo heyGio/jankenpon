@@ -8,6 +8,7 @@ function getAi() {
             console.warn('GEMINI_API_KEY is not set. Gemini functions will fail.');
             return null;
         }
+        console.log('Using GEMINI_API_KEY:', process.env.GEMINI_API_KEY);
         ai = new GoogleGenAI({ apiKey: process.env.GEMINI_API_KEY });
     }
     return ai;

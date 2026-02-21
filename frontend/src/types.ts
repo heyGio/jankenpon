@@ -5,7 +5,7 @@ export interface GameState {
     scores: { A: number; B: number };
     streaks: { A_losses: number; B_losses: number; ties: number };
     jolly: { A_typed_turns: number; B_typed_turns: number };
-    round: { timer_ms: number; A_label: any; B_label: any; ready: { A: boolean; B: boolean } };
+    round: { roundId: number; timer_ms: number; A_label: any; B_label: any; ready: { A: boolean; B: boolean } };
     players: { A: string | null; B: string | null };
     names: { A: string | null; B: string | null };
 }
