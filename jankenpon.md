@@ -57,6 +57,7 @@ Draw-kenpon is as much about resource management and psychology as it is about d
 ## 5. Audio & Visuals
 
 * **UI/UX:** Players play on separate devices (e.g., two smartphones or two browser windows on different computers). They cannot see each other's canvas during the drawing phase to preserve the element of surprise and mind games. A highly visible ticking timer is centralized on both screens to build tension.
+* **Screen Layout (Per UI Mockup):** The main gameplay screen uses a vertical split design showcasing both players' inputs side-by-side (e.g., "Draw 1" with a blue water drop on the left, and "Draw 2" with red fire on the right). At the bottom center is a status bar featuring a "VS" center label with "win" below it, flanked by circular win/life counters for each player tracking their score incrementally (e.g., from 3 to 2). A "30 sec." round timer sits explicitly next to this status bar.
 * **Visuals:** Fast, competitive arcade aesthetics. When the objects are recognized, Google's state-of-the-art models like Imagen and Veo could generate a cool high-quality image or short animation of the recognized object clashing with the opponent's.
 * **Audio:** Fast-paced, ticking-clock music during the 30-second draw phase. A dramatic impact sound during the LLM judging phase, followed by a clear announcement of the winner.
 

@@ -101,6 +101,7 @@ The game is an endurance test; there is no "winning," only surviving longer. Dif
 * **Explosions:** Expanding solid circles of color.
 * **Colors:** High contrast. Bright missile trails against a dark background (or colored sky).
 * **Animation:** Smooth movement of trails. Flashing text for "GAME OVER" or "THE END".
+* The UI will feature a persistent win counter at the bottom of the screen constantly displaying both the player's and the opponent's current round wins. It should be situated neatly beside the 'VS' indicator.
 
 ### 5.2 Sound Effects
 
