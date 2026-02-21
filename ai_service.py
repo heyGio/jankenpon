@@ -1,6 +1,6 @@
 import os
 import json
-from base64 import b64decode
+from base64 import b64decode, b64encode
 from io import BytesIO
 from PIL import Image
 
@@ -9,6 +9,7 @@ from google.genai import types
 
 # Initialize Gemini Client lazily
 client = None
+image_client = None
 
 def get_client():
     global client
@@ -19,6 +20,16 @@ def get_client():
         else:
             client = genai.Client()
     return client
+
+def get_image_client():
+    global image_client
+    if not image_client:
+        api_key = os.environ.get("GEMINI_API_KEY")
+        if api_key:
+            image_client = genai.Client(api_key=api_key, http_options={'api_version': 'v1alpha'})
+        else:
+            image_client = genai.Client(http_options={'api_version': 'v1alpha'})
+    return image_client
 
 def get_image_from_base64(b64_str: str) -> Image.Image:
     if "," in b64_str:
@@ -109,9 +120,9 @@ async def generate_cartoon_avatar(concept: str) -> str | None:
     prompt = f"A vibrant, cool, cartoonish, and dramatic illustration of: {concept}. Standalone object with a clean background. High quality digital art style, suitable for a video game character portrait."
     
     try:
-        c = get_client()
+        c = get_image_client()
         result = await c.aio.models.generate_images(
-            model='imagen-3.0-generate-001',
+            model='imagen-4.0-fast-generate-001',
             prompt=prompt,
             config=types.GenerateImagesConfig(
                 number_of_images=1,
@@ -121,9 +132,13 @@ async def generate_cartoon_avatar(concept: str) -> str | None:
             )
         )
         for gen_image in result.generated_images:
-            return gen_image.image.image_bytes.decode('utf-8') if isinstance(gen_image.image.image_bytes, bytes) else gen_image.image.image_bytes
+            return b64encode(gen_image.image.image_bytes).decode('utf-8') if isinstance(gen_image.image.image_bytes, bytes) else gen_image.image.image_bytes
         return None
     except Exception as e:
-        print(f"Error generating image for {concept}: {e}")
+        error_msg = str(e)
+        if "404 NOT_FOUND" in error_msg:
+            print(f"⚠️ Imagen 3 access restricted: Your API key does not have access to Imagen 3 (returned 404). This feature is currently in early access/preview on Google AI Studio. The game will proceed without avatars.")
+        else:
+            print(f"Error generating image for {concept}: {e}")
         return None
 
