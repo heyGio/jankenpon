@@ -79,7 +79,7 @@ function setupSocket(io) {
             }
 
             // Store label with potential flags
-            const submission = { label, containsText, type };
+            const submission = { label, containsText, type, image: content };
 
             if (playerId === 'A') {
                 match.round.A_label = submission;
@@ -192,6 +192,8 @@ async function evaluateRound(io, code, match) {
     io.to(code).emit('round:result', {
         A_label: subA.label,
         B_label: subB.label,
+        A_image: subA.image,
+        B_image: subB.image,
         winner,
         reason,
         new_baseline: match.baseline

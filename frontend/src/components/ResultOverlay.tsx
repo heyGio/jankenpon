@@ -21,6 +21,8 @@ export default function ResultOverlay({ result, playerSlot, baseline, isReady, o
 
     const myLabel = playerSlot === 'A' ? result.A_label : result.B_label;
     const opLabel = playerSlot === 'A' ? result.B_label : result.A_label;
+    const myImage = playerSlot === 'A' ? result.A_image : result.B_image;
+    const opImage = playerSlot === 'A' ? result.B_image : result.A_image;
 
     let title = '';
     let icon = null;
@@ -57,14 +59,21 @@ export default function ResultOverlay({ result, playerSlot, baseline, isReady, o
                     {formattedReason}
                 </p>
 
-                <div className="grid grid-cols-2 gap-4 w-full mb-8">
-                    <div className="bg-black/30 p-4 rounded-2xl border border-white/10 flex flex-col items-center justify-center">
-                        <span className="text-xs text-white/50 uppercase tracking-widest font-bold mb-1">You DREW</span>
-                        <span className="text-2xl font-bold text-white capitalize">{myLabel || '?'}</span>
+                <div className="flex w-full mb-8 items-center justify-between gap-4">
+                    <div className="flex-1 bg-black/30 p-4 rounded-2xl border border-white/10 flex flex-col items-center justify-center relative">
+                        <span className="text-[10px] text-indigo-300/80 uppercase tracking-widest font-bold mb-3 z-10">You DREW</span>
+                        {myImage && <img src={myImage} alt="Your drawing" className="w-full max-w-[140px] aspect-square object-contain bg-white rounded-xl mb-3 border-4 border-indigo-500/50 shadow-lg" />}
+                        <span className="text-lg font-bold text-white capitalize z-10 text-center leading-tight">{myLabel || '?'}</span>
                     </div>
-                    <div className="bg-black/30 p-4 rounded-2xl border border-white/10 flex flex-col items-center justify-center">
-                        <span className="text-xs text-white/50 uppercase tracking-widest font-bold mb-1">Opponent DREW</span>
-                        <span className="text-2xl font-bold text-white capitalize">{opLabel || '?'}</span>
+
+                    <div className="flex flex-col items-center justify-center px-1">
+                        <span className="text-3xl font-black text-slate-500/50 italic">VS</span>
+                    </div>
+
+                    <div className="flex-1 bg-black/30 p-4 rounded-2xl border border-white/10 flex flex-col items-center justify-center relative">
+                        <span className="text-[10px] text-rose-300/80 uppercase tracking-widest font-bold mb-3 z-10">Opponent DREW</span>
+                        {opImage && <img src={opImage} alt="Opponent drawing" className="w-full max-w-[140px] aspect-square object-contain bg-slate-200 rounded-xl mb-3 border-4 border-rose-500/50 shadow-lg" />}
+                        <span className="text-lg font-bold text-white capitalize z-10 text-center leading-tight">{opLabel || '?'}</span>
                     </div>
                 </div>
 

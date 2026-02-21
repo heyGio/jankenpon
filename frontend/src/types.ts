@@ -13,6 +13,8 @@ export interface GameState {
 export interface RoundResult {
     A_label: string;
     B_label: string;
+    A_image?: string;
+    B_image?: string;
     winner: 'A' | 'B' | 'tie';
     reason: string;
     new_baseline: string;
