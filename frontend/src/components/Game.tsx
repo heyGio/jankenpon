@@ -16,11 +16,7 @@ export default function Game({ gameState, playerSlot, matchCode, roundResult }: 
     const sigCanvas = useRef<SignatureCanvas>(null);
     const [timeLeft, setTimeLeft] = useState(30);
     const [submitted, setSubmitted] = useState(false);
-    const [jollyText, setJollyText] = useState('');
-
     const opponentSlot = playerSlot === 'A' ? 'B' : 'A';
-    const matchJolly = playerSlot === 'A' ? gameState.jolly.A_typed_turns : gameState.jolly.B_typed_turns;
-    const isJollyMode = matchJolly > 0;
 
     // Track timer
     useEffect(() => {
@@ -30,7 +26,6 @@ export default function Game({ gameState, playerSlot, matchCode, roundResult }: 
         setSubmitted(false);
         setTimeLeft(30);
         sigCanvas.current?.clear();
-        setJollyText('');
 
         const interval = setInterval(() => {
             setTimeLeft((prev) => {
@@ -48,14 +43,7 @@ export default function Game({ gameState, playerSlot, matchCode, roundResult }: 
 
     const handleTimeUp = () => {
         if (!submitted) {
-            if (isJollyMode && jollyText.trim()) {
-                handleSubmitText(new Event('submit') as any);
-            } else if (!isJollyMode) {
-                handleSubmitDoodle();
-            } else {
-                // Fallback: Submit empty/unknown if nothing typed
-                submit('text', 'unknown');
-            }
+            handleSubmitDoodle();
         }
     };
 
@@ -80,11 +68,7 @@ export default function Game({ gameState, playerSlot, matchCode, roundResult }: 
         submit('doodle', dataUrl);
     };
 
-    const handleSubmitText = (e: React.FormEvent) => {
-        e.preventDefault();
-        if (submitted) return;
-        submit('text', jollyText.trim() || 'unknown');
-    };
+
 
     const submit = (type: 'doodle' | 'text', content: string) => {
         setSubmitted(true);
@@ -147,45 +131,19 @@ export default function Game({ gameState, playerSlot, matchCode, roundResult }: 
                             </span>
                             <span className="font-semibold text-indigo-200">Your Canvas</span>
                         </div>
-                        {isJollyMode && (
-                            <span className="text-xs font-bold text-pink-400 bg-pink-500/10 px-2 py-1 rounded">
-                                JOLLY COMEBACK ({matchJolly} left)
-                            </span>
-                        )}
                     </div>
 
                     <div className="flex-1 bg-white relative min-h-[400px]">
                         {/* Container for canvas so it doesn't disappear */}
                         <div className={`absolute inset-0 ${submitted ? 'pointer-events-none opacity-50' : ''}`}>
-                            {isJollyMode ? (
-                                <div className="absolute inset-0 bg-slate-800 flex flex-col items-center justify-center p-8">
-                                    <Edit3 className="w-12 h-12 text-pink-400 mb-6 opacity-80" />
-                                    <h3 className="text-xl font-bold text-white mb-4 text-center">Type your object instead!</h3>
-                                    <form onSubmit={handleSubmitText} className="w-full max-w-sm flex gap-2">
-                                        <input
-                                            type="text"
-                                            value={jollyText}
-                                            onChange={e => setJollyText(e.target.value)}
-                                            placeholder="e.g. black hole"
-                                            className="flex-1 bg-slate-900 border border-slate-700 rounded-lg px-4 py-3 text-white focus:outline-none focus:ring-2 focus:ring-pink-500"
-                                            autoFocus
-                                            disabled={submitted}
-                                        />
-                                        <button type="submit" disabled={submitted} className="bg-pink-600 hover:bg-pink-500 text-white px-4 py-3 rounded-lg font-bold transition disabled:opacity-50">
-                                            Submit
-                                        </button>
-                                    </form>
-                                </div>
-                            ) : (
-                                <SignatureCanvas
-                                    ref={sigCanvas}
-                                    penColor="black"
-                                    backgroundColor="white"
-                                    minWidth={2}
-                                    maxWidth={8}
-                                    canvasProps={{ className: "w-full h-full cursor-crosshair" }}
-                                />
-                            )}
+                            <SignatureCanvas
+                                ref={sigCanvas}
+                                penColor="black"
+                                backgroundColor="white"
+                                minWidth={2}
+                                maxWidth={8}
+                                canvasProps={{ className: "w-full h-full cursor-crosshair" }}
+                            />
                         </div>
 
                         {/* Overlay when submitted */}
@@ -200,7 +158,7 @@ export default function Game({ gameState, playerSlot, matchCode, roundResult }: 
                         )}
                     </div>
 
-                    {!submitted && !isJollyMode && (
+                    {!submitted && (
                         <div className="p-3 bg-slate-900/50 border-t border-white/5 flex gap-2 justify-between">
                             <button onClick={clearCanvas} className="flex items-center gap-1 px-4 py-2 hover:bg-slate-800 rounded-lg text-sm text-slate-300 transition">
                                 <RefreshCcw className="w-4 h-4" /> Clear
@@ -250,7 +208,7 @@ export default function Game({ gameState, playerSlot, matchCode, roundResult }: 
 
             {/* Rules Notice */}
             <div className="text-center text-xs text-slate-500 flex justify-center items-center gap-4">
-                <span className="flex items-center gap-1"><AlertCircle className="w-3 h-3" /> No repeating words</span>
+                <span className="flex items-center gap-1"><AlertCircle className="w-3 h-3" /> No repeating objects</span>
                 <span className="flex items-center gap-1"><AlertCircle className="w-3 h-3" /> No writing text in drawings</span>
                 {gameState.streaks.ties > 0 && <span className="text-amber-400 font-bold">Ties: {gameState.streaks.ties}/3</span>}
             </div>

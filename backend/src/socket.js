@@ -76,11 +76,6 @@ function setupSocket(io) {
                 const result = await classifyDoodle(content);
                 label = result.label;
                 containsText = result.contains_text;
-            } else if (type === 'text') {
-                label = normalizeLabel(content);
-                // decrement jolly turns
-                if (playerId === 'A') match.jolly.A_typed_turns = Math.max(0, match.jolly.A_typed_turns - 1);
-                if (playerId === 'B') match.jolly.B_typed_turns = Math.max(0, match.jolly.B_typed_turns - 1);
             }
 
             // Store label with potential flags
@@ -132,16 +127,25 @@ async function evaluateRound(io, code, match) {
     const aRepeat = match.history.includes(subA.label);
     const bRepeat = match.history.includes(subB.label);
 
-    if ((aTextViol && bTextViol) || (aRepeat && bRepeat)) {
+    if (aTextViol && bTextViol) {
         winner = 'tie';
-        reason = 'Both players violated the rules (Text or Repeat).';
+        reason = 'Both players wrote text in their drawing.';
+    } else if (aRepeat && bRepeat) {
+        winner = 'tie';
+        reason = 'Both players repeated an object that has been drawn before.';
+    } else if (aTextViol && bRepeat) {
+        winner = 'tie';
+        reason = 'Player A wrote text and Player B repeated an object.';
+    } else if (aRepeat && bTextViol) {
+        winner = 'tie';
+        reason = 'Player A repeated an object and Player B wrote text.';
     } else if (aTextViol || aRepeat) {
         winner = 'B';
-        reason = aTextViol ? 'Player A wrote text.' : 'Player A repeated a word.';
+        reason = aTextViol ? 'Player A wrote text in their drawing.' : 'Player A repeated an object that has been drawn before.';
         newBaseline = subB.label; // Simplify baseline update on default win
     } else if (bTextViol || bRepeat) {
         winner = 'A';
-        reason = bTextViol ? 'Player B wrote text.' : 'Player B repeated a word.';
+        reason = bTextViol ? 'Player B wrote text in their drawing.' : 'Player B repeated an object that has been drawn before.';
         newBaseline = subA.label;
     } else {
         // 3 & 4. Baseline and Strength comparison via Referee
@@ -171,10 +175,6 @@ async function evaluateRound(io, code, match) {
     } else {
         match.streaks.ties += 1;
     }
-
-    // Jolly comeback
-    if (match.streaks.A_losses >= 3) match.jolly.A_typed_turns = 2;
-    if (match.streaks.B_losses >= 3) match.jolly.B_typed_turns = 2;
 
     // Set new baseline
     match.baseline = newBaseline;

@@ -1,5 +1,6 @@
 import { useState } from 'react';
 import { Play, Users, Sparkles, Sword } from 'lucide-react';
+import { backendUrl } from '../config';
 
 interface LobbyProps {
     onJoin: (code: string, slot: 'A' | 'B', name: string) => void;
@@ -10,8 +11,6 @@ export default function Lobby({ onJoin }: LobbyProps) {
     const [joinCode, setJoinCode] = useState('');
     const [error, setError] = useState('');
     const [loading, setLoading] = useState(false);
-
-    const backendUrl = import.meta.env.VITE_BACKEND_URL || 'http://localhost:3001';
 
     const handleCreate = async () => {
         if (!playerName.trim()) {
