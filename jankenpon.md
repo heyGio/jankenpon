@@ -12,7 +12,7 @@
 
 ## 1. Summary
 
-Draw-kenpon is a fast-paced, strategic twist on the traditional game of Rock, Paper, Scissors. Instead of choosing from a predefined set of three options, players must draw an object they believe will defeat their opponent's choice. A drawing recognition system detects the hand-drawn images (and optionally renders a polished version of them). An LLM (Large Language Model) acts as the ultimate judge, determining which of the two objects is stronger and declaring the winner of the round. 
+Draw-kenpon is a fast-paced, strategic twist on the traditional game of Rock, Paper, Scissors. Instead of choosing from a predefined set of three options, players must draw an object they believe will defeat their opponent's choice. A drawing recognition system powered by the Gemini Developer API detects the hand-drawn images (and optionally uses Google's state-of-the-art models like Imagen and Veo to render a polished version or animation of them). An LLM (Large Language Model) acts as the ultimate judge, determining which of the two objects is stronger and declaring the winner of the round. 
 
 It is a mind game of escalation—players must draw something strong enough to win, but must be careful not to draw something so powerful that they cannot surpass it in future rounds. The strongest object played sets a new baseline power level for the rest of the match.
 
@@ -23,7 +23,7 @@ The game can be played either 1vs1 against another human, or 1vsBOT against an A
 ### 2.1 Core Loop
 
 1. **Draw Phase:** Both players have exactly 30 seconds to draw an object on their respective digital canvases.
-2. **Recognition:** A computer vision system recognizes what was drawn by both players.
+2. **Recognition:** A drawing recognition system utilizing the Gemini Developer API recognizes what was drawn by both players and detects if any text was written.
 3. **Reveal & Judging Phase:** Both screens update to reveal the two recognized objects simultaneously to both players. An LLM evaluates them, announces which of the two is stronger, and provides a brief explanation for its judgment.
 4. **New Baseline:** The winning (strongest) object becomes the new "baseline" power level for both players in all subsequent rounds. 
 5. **Next Round:** Players must now draw something stronger than the newly established baseline.
@@ -57,13 +57,14 @@ Draw-kenpon is as much about resource management and psychology as it is about d
 ## 5. Audio & Visuals
 
 * **UI/UX:** Players play on separate devices (e.g., two smartphones or two browser windows on different computers). They cannot see each other's canvas during the drawing phase to preserve the element of surprise and mind games. A highly visible ticking timer is centralized on both screens to build tension.
-* **Visuals:** Fast, competitive arcade aesthetics. When the objects are recognized, an optional AI model could generate a cool image of the recognized object clashing with the opponent's.
+* **Visuals:** Fast, competitive arcade aesthetics. When the objects are recognized, Google's state-of-the-art models like Imagen and Veo could generate a cool high-quality image or short animation of the recognized object clashing with the opponent's.
 * **Audio:** Fast-paced, ticking-clock music during the 30-second draw phase. A dramatic impact sound during the LLM judging phase, followed by a clear announcement of the winner.
 
 ## 6. Technical Specifications
 
 * **Drawing Canvas:** HTML5 Canvas or similar technology for fluid, responsive drawing.
-* **Drawing Recognition AI:** A neural network to classify the sketches in real-time.
+* **Drawing Recognition AI:** The Gemini Developer API is used to classify the sketches and detect any written text in real-time.
+* **Generative Visuals:** Google's state-of-the-art models like Imagen and Veo are used to render high-quality images or animations of the drawn concepts.
 * **Judge LLM:** A prompt-engineered LLM acting as an impartial judge to compare two concepts and evaluate them against the match baseline.
 * **Multiplayer Sync:** WebSockets for real-time matchmaking and syncing the 30-second global timer.
 
