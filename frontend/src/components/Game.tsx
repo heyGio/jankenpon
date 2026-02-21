@@ -106,7 +106,7 @@ export default function Game({ gameState, playerSlot, matchCode, roundResult }: 
             {/* HUD Bar */}
             <div className="glass-panel p-4 flex justify-between items-center px-8">
                 <div className="flex flex-col">
-                    <span className="text-xs text-slate-400 font-bold tracking-wider uppercase">You</span>
+                    <span className="text-xs text-slate-400 font-bold tracking-wider uppercase">{gameState.names[playerSlot]} (You)</span>
                     <span className="text-3xl font-black text-white">{myScore}</span>
                 </div>
 
@@ -129,7 +129,7 @@ export default function Game({ gameState, playerSlot, matchCode, roundResult }: 
                 </div>
 
                 <div className="flex flex-col items-end">
-                    <span className="text-xs text-slate-400 font-bold tracking-wider uppercase">Opponent</span>
+                    <span className="text-xs text-slate-400 font-bold tracking-wider uppercase">{gameState.names[opponentSlot]} (Opponent)</span>
                     <span className="text-3xl font-black text-white">{opScore}</span>
                 </div>
             </div>
