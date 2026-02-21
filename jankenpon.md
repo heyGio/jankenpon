@@ -3,7 +3,7 @@
 | **Project Name** | Draw-kenpon |
 | --- | --- |
 | **Genre** | Strategy / Party / Drawing Game |
-| **Perspective** | 2D UI / Split-Screen Canvas |
+| **Perspective** | 2D UI / Separate Devices (Hidden Canvas) |
 | **Players** | 1 or 2 (Against AI or Human) |
 | **Platform** | Web / Mobile (Touchscreen or Mouse) |
 | **Input** | Drawing (Touch/Mouse) + Keyboard (for Jolly mechanic) |
@@ -24,7 +24,7 @@ The game can be played either 1vs1 against another human, or 1vsBOT against an A
 
 1. **Draw Phase:** Both players have exactly 30 seconds to draw an object on their respective digital canvases.
 2. **Recognition:** A computer vision system recognizes what was drawn by both players.
-3. **Judging Phase:** An LLM evaluates both recognized objects. It determines which of the two is stronger and provides a brief explanation.
+3. **Reveal & Judging Phase:** Both screens update to reveal the two recognized objects simultaneously to both players. An LLM evaluates them, announces which of the two is stronger, and provides a brief explanation for its judgment.
 4. **New Baseline:** The winning (strongest) object becomes the new "baseline" power level for both players in all subsequent rounds. 
 5. **Next Round:** Players must now draw something stronger than the newly established baseline.
 6. **Match End:** The game ends either after a set number of rounds or early due to a stalemate. The player who won the most rounds is declared the overall winner.
@@ -56,7 +56,7 @@ Draw-kenpon is as much about resource management and psychology as it is about d
 
 ## 5. Audio & Visuals
 
-* **UI/UX:** Split-screen or side-by-side canvases. A highly visible ticking timer in the center to build tension and adrenaline.
+* **UI/UX:** Players play on separate devices (e.g., two smartphones or two browser windows on different computers). They cannot see each other's canvas during the drawing phase to preserve the element of surprise and mind games. A highly visible ticking timer is centralized on both screens to build tension.
 * **Visuals:** Fast, competitive arcade aesthetics. When the objects are recognized, an optional AI model could generate a cool image of the recognized object clashing with the opponent's.
 * **Audio:** Fast-paced, ticking-clock music during the 30-second draw phase. A dramatic impact sound during the LLM judging phase, followed by a clear announcement of the winner.
 
