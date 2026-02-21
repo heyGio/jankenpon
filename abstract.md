@@ -2,7 +2,7 @@
 
 **Draw-kenpon** is a real-time, two-player competitive web game that reimagines rock–paper–scissors as an **escalating creative arms race**. Instead of choosing from three fixed options, players **draw any object they can think of** on a shared canvas. Google's **Gemini Vision** AI identifies what each player drew, and a **Gemini LLM referee** judges which object is stronger. The strongest object becomes the new **baseline** that both players must beat in the next round — creating an ever-escalating chain of increasingly powerful concepts.
 
-The twist: **winning too hard makes future rounds harder.** If you draw a nuclear bomb and win, the next baseline becomes "nuclear bomb" — and now *both* players need to think of something even stronger. This creates a fascinating **strategy-meets-creativity** loop where players must balance winning the current round against setting an impossible baseline for themselves.
+The twist: **winning too hard makes future rounds harder.** If you draw a black hole and win, the next baseline becomes "black hole" — and now *both* players need to think of something even stronger. This creates a fascinating **strategy-meets-creativity** loop where players must balance winning the current round against setting an impossible baseline for themselves.
 
 Sessions are short (3–8 minutes), fast-paced (30 seconds per round), and designed for the energy of a party game with the depth of a mind game.
 
