@@ -1,5 +1,5 @@
 const { getMatch, resetRound, deleteMatch } = require('./gameState');
-const { classifyDoodle, referee, normalizeLabel } = require('./gemini');
+const { classifyDoodle, referee, normalizeLabel, enhanceDoodle } = require('./gemini');
 
 function setupSocket(io) {
     io.on('connection', (socket) => {
@@ -156,9 +156,22 @@ async function evaluateRound(io, code, match) {
         winner = 'A';
         reason = bTextViol ? 'Player B wrote text in their drawing.' : 'Player B repeated an object that has been drawn before.';
         newBaseline = subA.label;
-    } else {
-        // 3 & 4. Baseline and Strength comparison via Referee
-        const refResult = await referee(match.baseline, subA.label, subB.label, match.history);
+    }
+
+    // 3 & 4. Baseline and Strength comparison via Referee
+    // We run referee and Image Enhancements in parallel to save time
+    let refResultPromise = null;
+    if (winner === 'tie' && !aTextViol && !bTextViol && !aRepeat && !bRepeat) {
+        refResultPromise = referee(match.baseline, subA.label, subB.label, match.history);
+    }
+
+    const [enhancedA, enhancedB, refResult] = await Promise.all([
+        enhanceDoodle(subA.label),
+        enhanceDoodle(subB.label),
+        refResultPromise ? refResultPromise : Promise.resolve(null)
+    ]);
+
+    if (refResult) {
         winner = refResult.winner;
         reason = refResult.reason;
         if (refResult.strongest_object) {
@@ -194,6 +207,8 @@ async function evaluateRound(io, code, match) {
         B_label: subB.label,
         A_image: subA.image,
         B_image: subB.image,
+        A_enhanced: enhancedA,
+        B_enhanced: enhancedB,
         winner,
         reason,
         new_baseline: match.baseline

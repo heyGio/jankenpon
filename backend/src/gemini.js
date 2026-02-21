@@ -127,8 +127,40 @@ Decide the winner based on conventional logic or physics. Who would win in a fig
     }
 }
 
+/**
+ * Uses Imagen 4.0 to generate an enhanced beautiful version of the doodle.
+ */
+async function enhanceDoodle(label) {
+    const aiClient = getAi();
+    if (!aiClient || !label || label === 'unknown') return null;
+
+    try {
+        const prompt = `A highly detailed, beautiful, premium masterpiece digital illustration of ${label}. Vibrant colors, perfect lighting, professional concept art.`;
+
+        const response = await aiClient.models.generateImages({
+            model: 'imagen-4.0-fast-generate-001',
+            prompt: prompt,
+            config: {
+                numberOfImages: 1,
+                outputMimeType: 'image/jpeg',
+                aspectRatio: '1:1'
+            }
+        });
+
+        if (response.generatedImages && response.generatedImages.length > 0) {
+            // Return as a standard data URL so the frontend can just plug it into <img src="..." />
+            return `data:image/jpeg;base64,${response.generatedImages[0].image.imageBytes}`;
+        }
+        return null;
+    } catch (error) {
+        console.error("Gemini Imagen Error:", error);
+        return null;
+    }
+}
+
 module.exports = {
     classifyDoodle,
     referee,
-    normalizeLabel
+    normalizeLabel,
+    enhanceDoodle
 };

@@ -15,6 +15,8 @@ export interface RoundResult {
     B_label: string;
     A_image?: string;
     B_image?: string;
+    A_enhanced?: string;
+    B_enhanced?: string;
     winner: 'A' | 'B' | 'tie';
     reason: string;
     new_baseline: string;

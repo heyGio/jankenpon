@@ -23,6 +23,8 @@ export default function ResultOverlay({ result, playerSlot, baseline, isReady, o
     const opLabel = playerSlot === 'A' ? result.B_label : result.A_label;
     const myImage = playerSlot === 'A' ? result.A_image : result.B_image;
     const opImage = playerSlot === 'A' ? result.B_image : result.A_image;
+    const myEnhanced = playerSlot === 'A' ? result.A_enhanced : result.B_enhanced;
+    const opEnhanced = playerSlot === 'A' ? result.B_enhanced : result.A_enhanced;
 
     let title = '';
     let icon = null;
@@ -60,9 +62,28 @@ export default function ResultOverlay({ result, playerSlot, baseline, isReady, o
                 </p>
 
                 <div className="flex w-full mb-8 items-center justify-between gap-4">
+                    {/* Player Zone */}
                     <div className="flex-1 bg-black/30 p-4 rounded-2xl border border-white/10 flex flex-col items-center justify-center relative">
-                        <span className="text-[10px] text-indigo-300/80 uppercase tracking-widest font-bold mb-3 z-10">You DREW</span>
-                        {myImage && <img src={myImage} alt="Your drawing" className="w-full max-w-[140px] aspect-square object-contain bg-white rounded-xl mb-3 border-4 border-indigo-500/50 shadow-lg" />}
+                        <span className="text-[10px] text-indigo-300/80 uppercase tracking-widest font-bold mb-3 z-10 text-center w-full block">You DREW</span>
+
+                        <div className="flex flex-col sm:flex-row gap-2 mb-3">
+                            <div className="flex flex-col items-center gap-1">
+                                {myImage && <img src={myImage} alt="Your drawing" className="w-[100px] aspect-square object-contain bg-white rounded-xl border border-white/20 shadow-md" />}
+                                <span className="text-[9px] text-white/50 uppercase font-bold tracking-widest">Before</span>
+                            </div>
+
+                            <div className="flex flex-col items-center gap-1">
+                                {myEnhanced ? (
+                                    <img src={myEnhanced} alt="Enhanced drawing" className="w-[100px] aspect-square object-cover bg-slate-900 rounded-xl border border-indigo-400/50 shadow-lg" />
+                                ) : (
+                                    <div className="w-[100px] aspect-square bg-slate-900/50 rounded-xl border border-indigo-400/20 shadow-lg flex items-center justify-center animate-pulse">
+                                        <Sparkles className="w-6 h-6 text-indigo-400/50" />
+                                    </div>
+                                )}
+                                <span className="text-[9px] text-indigo-300 uppercase font-bold tracking-widest">After</span>
+                            </div>
+                        </div>
+
                         <span className="text-lg font-bold text-white capitalize z-10 text-center leading-tight">{myLabel || '?'}</span>
                     </div>
 
@@ -70,9 +91,28 @@ export default function ResultOverlay({ result, playerSlot, baseline, isReady, o
                         <span className="text-3xl font-black text-slate-500/50 italic">VS</span>
                     </div>
 
+                    {/* Opponent Zone */}
                     <div className="flex-1 bg-black/30 p-4 rounded-2xl border border-white/10 flex flex-col items-center justify-center relative">
-                        <span className="text-[10px] text-rose-300/80 uppercase tracking-widest font-bold mb-3 z-10">Opponent DREW</span>
-                        {opImage && <img src={opImage} alt="Opponent drawing" className="w-full max-w-[140px] aspect-square object-contain bg-slate-200 rounded-xl mb-3 border-4 border-rose-500/50 shadow-lg" />}
+                        <span className="text-[10px] text-rose-300/80 uppercase tracking-widest font-bold mb-3 z-10 text-center w-full block">Opponent DREW</span>
+
+                        <div className="flex flex-col sm:flex-row gap-2 mb-3">
+                            <div className="flex flex-col items-center gap-1">
+                                {opImage && <img src={opImage} alt="Opponent drawing" className="w-[100px] aspect-square object-contain bg-slate-200 rounded-xl border border-white/20 shadow-md" />}
+                                <span className="text-[9px] text-white/50 uppercase font-bold tracking-widest">Before</span>
+                            </div>
+
+                            <div className="flex flex-col items-center gap-1">
+                                {opEnhanced ? (
+                                    <img src={opEnhanced} alt="Enhanced drawing" className="w-[100px] aspect-square object-cover bg-slate-900 rounded-xl border border-rose-400/50 shadow-lg" />
+                                ) : (
+                                    <div className="w-[100px] aspect-square bg-slate-900/50 rounded-xl border border-rose-400/20 shadow-lg flex items-center justify-center animate-pulse">
+                                        <Sparkles className="w-6 h-6 text-rose-400/50" />
+                                    </div>
+                                )}
+                                <span className="text-[9px] text-rose-300 uppercase font-bold tracking-widest">After</span>
+                            </div>
+                        </div>
+
                         <span className="text-lg font-bold text-white capitalize z-10 text-center leading-tight">{opLabel || '?'}</span>
                     </div>
                 </div>
