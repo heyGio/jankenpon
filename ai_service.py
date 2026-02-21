@@ -111,13 +111,13 @@ async def generate_cartoon_avatar(concept: str) -> str | None:
     try:
         c = get_client()
         result = await c.aio.models.generate_images(
-            model='imagen-3.0-generate-002',
+            model='imagen-3.0-generate-001',
             prompt=prompt,
             config=types.GenerateImagesConfig(
                 number_of_images=1,
                 aspect_ratio="1:1",
                 output_mime_type="image/jpeg",
-                person_generation="DONOT_ALLOW"
+                person_generation="DONT_ALLOW"
             )
         )
         for gen_image in result.generated_images:
