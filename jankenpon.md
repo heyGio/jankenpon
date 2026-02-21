@@ -33,7 +33,7 @@ The game can be played either 1vs1 against another human, or 1vsBOT against an A
 
 ### 3.1 The Escalation Rule (The Baseline)
 * The strongest object played in any round sets the baseline power level for the entire match going forward.
-* *Example:* If Player A draws a sword and Player B draws a tank, the tank wins the round. The tank is now the new baseline. In the next round, both players must draw something that could defeat a tank. If someone draws a Nuclear Bomb, all future drawings must surpass a Nuclear Bomb.
+* *Example:* If Player A draws a sword and Player B draws a tank, the tank wins the round. The tank is now the new baseline. In the next round, both players must draw something that could defeat a tank. If someone draws a Black Hole, all future drawings must surpass a Black Hole.
 
 ### 3.2 Constraints & Penalties
 * **No Repeats:** A player cannot draw an object that has already been played in the current match. If a player draws a duplicate object, they automatically lose that round.
