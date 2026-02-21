@@ -26,7 +26,8 @@ const ui = {
     btnPlayAgain: document.getElementById('btn-play-again'),
     btnNextRound: document.getElementById('btn-next-round'),
     judgingStatus: document.getElementById('judging-status'),
-    nextRoundContainer: document.getElementById('next-round-container')
+    nextRoundContainer: document.getElementById('next-round-container'),
+    cbUseImagen: document.getElementById('cb-use-imagen')
 };
 
 // Canvas Setup
@@ -157,9 +158,10 @@ ui.btnNextRound.addEventListener('click', () => {
 // WebSocket Handling
 function connectWS() {
     ws = new WebSocket(`${WS_URL}/${myClientId}`);
+    const useImagen = ui.cbUseImagen.checked;
 
     ws.onopen = () => {
-        ws.send(JSON.stringify({ action: 'find_match' }));
+        ws.send(JSON.stringify({ action: 'find_match', use_imagen: useImagen }));
     };
 
     ws.onmessage = (event) => {
@@ -232,6 +234,8 @@ function handleMessage(msg) {
         document.getElementById('judging-expl').innerText = "";
         document.getElementById('judge-p1-desc').innerText = "?";
         document.getElementById('judge-p2-desc').innerText = "?";
+        document.getElementById('p1-avatar-container').classList.add('hidden');
+        document.getElementById('p2-avatar-container').classList.add('hidden');
         ui.nextRoundContainer.classList.add('hidden');
         ui.btnNextRound.disabled = false;
         ui.judgingStatus.innerText = "";
@@ -258,6 +262,18 @@ function handleMessage(msg) {
         elVerdict.style.color = vColor;
 
         document.getElementById('judging-expl').innerText = j.explanation + (j.violation_reason ? ` (Violation: ${j.violation_reason})` : "");
+
+        // Avatars
+        if (msg.p1_avatar) {
+            const p1c = document.getElementById('p1-avatar-container');
+            p1c.innerHTML = `<img src="data:image/jpeg;base64,${msg.p1_avatar}" alt="P1 Avatar">`;
+            p1c.classList.remove('hidden');
+        }
+        if (msg.p2_avatar) {
+            const p2c = document.getElementById('p2-avatar-container');
+            p2c.innerHTML = `<img src="data:image/jpeg;base64,${msg.p2_avatar}" alt="P2 Avatar">`;
+            p2c.classList.remove('hidden');
+        }
 
         // Update scores
         ui.p1Score.innerText = msg.p1_score;

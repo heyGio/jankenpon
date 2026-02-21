@@ -57,6 +57,14 @@
                 <p class="subtitle">The Ultimate AI Drawing Battle</p>
             </div>
             <button id="btn-find-match" class="btn-primary pulse">FIND MATCH</button>
+            <div class="mt-1">
+                <label
+                    style="font-size: 0.9em; opacity: 0.8; cursor: pointer; display: flex; align-items: center; justify-content: center; gap: 8px; margin-top: 15px;">
+                    <input type="checkbox" id="cb-use-imagen"
+                        style="accent-color: var(--accent); width: 18px; height: 18px;">
+                    🎨 Enable AI Cartoon Avatars (Takes longer)
+                </label>
+            </div>
             <div id="lobby-status" class="status-msg"></div>
         </section>
 
@@ -129,9 +137,15 @@
             <div class="judging-content panel">
                 <h2 class="judging-title animated-pulse">AI IS JUDGING...</h2>
                 <div class="clash-container">
-                    <div class="clash-item" id="judge-p1-desc">?</div>
+                    <div class="clash-side">
+                        <div id="p1-avatar-container" class="avatar-container hidden"></div>
+                        <div class="clash-item" id="judge-p1-desc">?</div>
+                    </div>
                     <div class="clash-vs">VS</div>
-                    <div class="clash-item" id="judge-p2-desc">?</div>
+                    <div class="clash-side">
+                        <div id="p2-avatar-container" class="avatar-container hidden"></div>
+                        <div class="clash-item" id="judge-p2-desc">?</div>
+                    </div>
                 </div>
                 <div class="judging-verdict" id="judging-verdict"></div>
                 <div class="judging-expl" id="judging-expl"></div>

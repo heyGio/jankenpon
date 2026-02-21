@@ -96,3 +96,34 @@ async def evaluate_drawings(baseline: str, p1_input: dict, p2_input: dict) -> di
             "explanation": "The Judge AI was confused or an error occurred.",
             "new_baseline": baseline
         }
+
+async def generate_cartoon_avatar(concept: str) -> str | None:
+    """
+    Given a concept, asks Imagen 3 to generate a cartoonish avatar of it.
+    Returns the base64 encoded image string, or None if it fails.
+    """
+    # Don't try to generate images for empty concepts or "Nothing"
+    if not concept or concept.lower() == "nothing" or concept.lower() == "unknown":
+        return None
+        
+    prompt = f"A vibrant, cool, cartoonish, and dramatic illustration of: {concept}. Standalone object with a clean background. High quality digital art style, suitable for a video game character portrait."
+    
+    try:
+        c = get_client()
+        result = await c.aio.models.generate_images(
+            model='imagen-3.0-generate-002',
+            prompt=prompt,
+            config=types.GenerateImagesConfig(
+                number_of_images=1,
+                aspect_ratio="1:1",
+                output_mime_type="image/jpeg",
+                person_generation="DONOT_ALLOW"
+            )
+        )
+        for gen_image in result.generated_images:
+            return gen_image.image.image_bytes.decode('utf-8') if isinstance(gen_image.image.image_bytes, bytes) else gen_image.image.image_bytes
+        return None
+    except Exception as e:
+        print(f"Error generating image for {concept}: {e}")
+        return None
+

@@ -58,9 +58,12 @@ async def websocket_endpoint(websocket: WebSocket, client_id: str):
             action = data.get("action")
 
             if action == "find_match":
+                use_imagen = data.get("use_imagen", False)
                 if game_manager.waiting_players:
-                    opponent_id = game_manager.waiting_players.pop(0)
+                    opponent_id, opp_use_imagen = game_manager.waiting_players.pop(0)
                     room = game_manager.create_room()
+                    
+                    room.use_imagen = use_imagen or opp_use_imagen
                     
                     room.add_player(opponent_id)
                     room.add_player(client_id)
@@ -81,7 +84,7 @@ async def websocket_endpoint(websocket: WebSocket, client_id: str):
                     asyncio.create_task(round_timer(room))
                     
                 else:
-                    game_manager.waiting_players.append(client_id)
+                    game_manager.waiting_players.append((client_id, use_imagen))
                     await manager.send_personal_message({"type": "waiting_for_match"}, client_id)
             
             elif action == "submit":
@@ -121,8 +124,8 @@ async def websocket_endpoint(websocket: WebSocket, client_id: str):
 
     except WebSocketDisconnect:
         manager.disconnect(client_id)
-        if client_id in game_manager.waiting_players:
-            game_manager.waiting_players.remove(client_id)
+        # Remove from waiting list
+        game_manager.waiting_players = [p for p in game_manager.waiting_players if p[0] != client_id]
             
         room_id = player_rooms.get(client_id)
         if room_id:

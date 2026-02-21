@@ -1,8 +1,8 @@
 import asyncio
 import json
 import uuid
-from typing import Dict, List
-from ai_service import evaluate_drawings
+from typing import Dict, List, Tuple
+from ai_service import evaluate_drawings, generate_cartoon_avatar
 
 class GameRoom:
     def __init__(self, room_id: str):
@@ -17,6 +17,7 @@ class GameRoom:
         self.ready_for_next = set() # set of socket_ids ready for next round
         self.ties_in_a_row = 0
         self.round_timer_task = None
+        self.use_imagen = False
 
     def add_player(self, socket_id: str):
         if len(self.players) >= 2:
@@ -95,6 +96,15 @@ class GameRoom:
         # Call Gemini
         judgment = await evaluate_drawings(self.baseline, p1_sub, p2_sub)
         
+        p1_avatar = None
+        p2_avatar = None
+        
+        # Concurrently generate images if enabled
+        if self.use_imagen:
+            p1_task = asyncio.create_task(generate_cartoon_avatar(judgment.get("p1_recognized")))
+            p2_task = asyncio.create_task(generate_cartoon_avatar(judgment.get("p2_recognized")))
+            p1_avatar, p2_avatar = await asyncio.gather(p1_task, p2_task)
+        
         # Process results
         winner_num = judgment.get("winner") # "p1", "p2", or "tie"
         
@@ -155,6 +165,8 @@ class GameRoom:
         return {
             "type": "round_result",
             "judgment": judgment,
+            "p1_avatar": p1_avatar,
+            "p2_avatar": p2_avatar,
             "p1_score": self.players[self.p1_id]["score"],
             "p2_score": self.players[self.p2_id]["score"],
             "p1_jolly": self.players[self.p1_id]["has_jolly"],
@@ -167,7 +179,7 @@ class GameRoom:
 class GameManager:
     def __init__(self):
         self.rooms: Dict[str, GameRoom] = {}
-        self.waiting_players: List[str] = [] # list of socket ids
+        self.waiting_players: List[Tuple[str, bool]] = [] # list of (socket_id, use_imagen)
 
     def create_room(self) -> GameRoom:
         room_id = str(uuid.uuid4())
