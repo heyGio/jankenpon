@@ -48,9 +48,25 @@ function resetRound(match) {
   match.round.roundId = (match.round.roundId || 1) + 1;
 }
 
+function resetMatchState(match) {
+  match.status = 'waiting';
+  match.baseline = null;
+  match.history = [];
+  match.scores = { A: 0, B: 0 };
+  match.streaks = { A_losses: 0, B_losses: 0, ties: 0 };
+  match.jolly = { A_typed_turns: 0, B_typed_turns: 0 };
+  resetRound(match);
+}
+
+function deleteMatch(code) {
+  matches.delete(code);
+}
+
 module.exports = {
   createMatch,
   getMatch,
   joinMatch,
-  resetRound
+  resetRound,
+  resetMatchState,
+  deleteMatch
 };

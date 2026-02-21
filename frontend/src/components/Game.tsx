@@ -10,9 +10,10 @@ interface GameProps {
     playerSlot: 'A' | 'B';
     matchCode: string;
     roundResult: RoundResult | null;
+    onLeaveMatch: () => void;
 }
 
-export default function Game({ gameState, playerSlot, matchCode, roundResult }: GameProps) {
+export default function Game({ gameState, playerSlot, matchCode, roundResult, onLeaveMatch }: GameProps) {
     const sigCanvas = useRef<SignatureCanvas>(null);
     const [timeLeft, setTimeLeft] = useState(30);
     const [submitted, setSubmitted] = useState(false);
@@ -223,6 +224,7 @@ export default function Game({ gameState, playerSlot, matchCode, roundResult }: 
                     onReady={() => socket.emit('player_ready', { code: matchCode, playerId: playerSlot })}
                     onStartNext={() => socket.emit('start_next_round', { code: matchCode })}
                     onEndMatch={() => socket.emit('end_match', { code: matchCode })}
+                    onLeaveMatch={onLeaveMatch}
                     playerAName={gameState.names.A || 'Player A'}
                     playerBName={gameState.names.B || 'Player B'}
                 />

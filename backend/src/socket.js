@@ -1,4 +1,4 @@
-const { getMatch, resetRound } = require('./gameState');
+const { getMatch, resetRound, deleteMatch } = require('./gameState');
 const { classifyDoodle, referee, normalizeLabel } = require('./gemini');
 
 function setupSocket(io) {
@@ -93,22 +93,31 @@ function setupSocket(io) {
             }
         });
 
+        socket.on('leave_match', ({ code }) => {
+            const match = getMatch(code);
+            if (!match) return;
+
+            socket.leave(code);
+            handlePlayerLeave(match, socket.id, io, code);
+        });
+
         socket.on('disconnect', () => {
             console.log(`User disconnected: ${socket.id}`);
-            // Find if this socket belonged to a match and broadcast disconnect info
-            const mapEntries = require('./gameState').getMatch ? undefined : null; // hacky check
-            // For MVP, if player disconnects, we just set their slot to null and update state
-            // It would be better to search matches, but simple hack: broadcast drop to all rooms this socket was in
             socket.rooms.forEach(room => {
                 const match = getMatch(room);
                 if (match) {
-                    if (match.players.A === socket.id) match.players.A = null;
-                    if (match.players.B === socket.id) match.players.B = null;
-                    io.to(room).emit('state:update', match);
+                    handlePlayerLeave(match, socket.id, io, room);
                 }
             });
         });
     });
+}
+
+function handlePlayerLeave(match, socketId, io, room) {
+    if (match.players.A === socketId || match.players.B === socketId) {
+        io.to(room).emit('match:cancelled', { reason: 'A player has left the match.' });
+        deleteMatch(room);
+    }
 }
 
 async function evaluateRound(io, code, match) {

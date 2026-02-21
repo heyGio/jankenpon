@@ -13,6 +13,18 @@ function App() {
   const [gameState, setGameState] = useState<GameState | null>(null);
   const [roundResult, setRoundResult] = useState<RoundResult | null>(null);
   const [matchEndResult, setMatchEndResult] = useState<any>(null);
+  const [cancelReason, setCancelReason] = useState<string | null>(null);
+
+  const resetToLobby = (reason?: string) => {
+    socket.disconnect();
+    setMatchCode(null);
+    setPlayerSlot(null);
+    setPlayerName(null);
+    setGameState(null);
+    setRoundResult(null);
+    setMatchEndResult(null);
+    if (reason) setCancelReason(reason);
+  };
 
   useEffect(() => {
     socket.on('connect', () => console.log('Connected to server'));
@@ -34,11 +46,16 @@ function App() {
       setRoundResult(null); // clear overlay if any
     });
 
+    socket.on('match:cancelled', (data: any) => {
+      resetToLobby(data.reason || 'Match was cancelled.');
+    });
+
     return () => {
       socket.off('connect');
       socket.off('state:update');
       socket.off('round:result');
       socket.off('match:ended');
+      socket.off('match:cancelled');
     };
   }, []);
 
@@ -50,8 +67,23 @@ function App() {
     socket.emit('join_room', { code, playerName: name });
   };
 
+  const handleLeaveMatch = () => {
+    if (matchCode) socket.emit('leave_match', { code: matchCode });
+    resetToLobby();
+  };
+
   if (!matchCode || !playerSlot || !playerName) {
-    return <Lobby onJoin={handleJoin} />;
+    return (
+      <div className="relative w-full h-full flex flex-col items-center">
+        {cancelReason && (
+          <div className="absolute top-4 z-50 bg-rose-500/90 text-white px-6 py-3 rounded-xl font-bold shadow-lg shadow-rose-500/20 border border-rose-400 backdrop-blur-sm animate-in slide-in-from-top-4 fade-in duration-300 flex items-center gap-2">
+            <span>⚠️</span> {cancelReason}
+            <button onClick={() => setCancelReason(null)} className="ml-4 opacity-70 hover:opacity-100">×</button>
+          </div>
+        )}
+        <Lobby onJoin={handleJoin} />
+      </div>
+    );
   }
 
   const isWaiting = gameState?.status === 'waiting';
@@ -113,6 +145,7 @@ function App() {
             playerSlot={playerSlot}
             matchCode={matchCode}
             roundResult={roundResult}
+            onLeaveMatch={handleLeaveMatch}
           />
         ) : gameState && isWaiting ? (
           <div className="flex flex-col items-center justify-center p-12 glass-panel max-w-xl mx-auto w-full animate-in fade-in zoom-in duration-300">
@@ -149,6 +182,10 @@ function App() {
                 {opJoined ? 'Waiting for Host to start match...' : 'Waiting for opponent...'}
               </div>
             )}
+
+            <button onClick={handleLeaveMatch} className="mt-8 text-slate-400 hover:text-rose-400 font-medium text-sm transition-colors underline decoration-slate-600 hover:decoration-rose-400">
+              Leave Match
+            </button>
           </div>
         ) : (
           <div className="flex flex-col items-center justify-center p-12 glass-panel max-w-sm mx-auto w-full">

@@ -10,11 +10,12 @@ interface Props {
     onReady: () => void;
     onStartNext: () => void;
     onEndMatch: () => void;
+    onLeaveMatch: () => void;
     playerAName: string;
     playerBName: string;
 }
 
-export default function ResultOverlay({ result, playerSlot, baseline, isReady, opReady, onReady, onStartNext, onEndMatch, playerAName, playerBName }: Props) {
+export default function ResultOverlay({ result, playerSlot, baseline, isReady, opReady, onReady, onStartNext, onEndMatch, onLeaveMatch, playerAName, playerBName }: Props) {
     const isWinner = result.winner === playerSlot;
     const isTie = result.winner === 'tie';
 
@@ -113,6 +114,13 @@ export default function ResultOverlay({ result, playerSlot, baseline, isReady, o
                             Opponent is ready!
                         </div>
                     )}
+
+                    <button
+                        onClick={onLeaveMatch}
+                        className="w-full py-3 mt-2 rounded-xl text-slate-400 font-bold bg-slate-800/50 hover:bg-slate-700/80 transition-all font-mono border border-slate-700 text-sm"
+                    >
+                        Leave Match
+                    </button>
                 </div>
             </div>
         </div>

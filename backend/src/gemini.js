@@ -86,11 +86,16 @@ Baseline Object: ${baseline || 'None'}
 Player A's Object: ${playerALabel}
 Player B's Object: ${playerBLabel}
 
-Rules to enforce:
-1. If "unknown", that player loses against a valid object.
-2. The winning object must be stronger than the Baseline Object.
+Rules to enforce strictly:
+1. If an object is "unknown", it automatically loses against any valid object.
+2. A player ONLY WINS if BOTH of these conditions are true:
+    a) Their object would realistically defeat the other player's object in a fight or conceptually.
+    b) AND their object is stronger than the Baseline Object (if a Baseline exists).
+3. If Player A beats Player B, but Player A does NOT beat the Baseline Object, then Player A DOES NOT WIN.
+4. If neither player's object is stronger than the Baseline Object, the result is a "tie".
+5. The strongest valid object drawn this round becomes the new strongest_object (even if the round was a tie).
 
-Decide the winner based on conventional logic or physics. Who would win in a fight or which is conceptually stronger?
+Decide the winner based on conventional logic or physics. Who would win in a fight or which is conceptually stronger? Follow the strict Baseline rules!
 `;
 
         const response = await aiClient.models.generateContent({
