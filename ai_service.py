@@ -1,15 +1,24 @@
 import os
-import google.generativeai as genai
 import json
 from base64 import b64decode
 from io import BytesIO
 from PIL import Image
 
-# Initialize Gemini
-genai.configure(api_key=os.environ.get("GEMINI_API_KEY"))
+from google import genai
+from google.genai import types
 
-# Use gemini-2.5-flash which has excellent vision capabilities and is fast
-model = genai.GenerativeModel('gemini-2.5-flash')
+# Initialize Gemini Client lazily
+client = None
+
+def get_client():
+    global client
+    if not client:
+        api_key = os.environ.get("GEMINI_API_KEY")
+        if api_key:
+            client = genai.Client(api_key=api_key)
+        else:
+            client = genai.Client()
+    return client
 
 def get_image_from_base64(b64_str: str) -> Image.Image:
     if "," in b64_str:
@@ -64,9 +73,15 @@ async def evaluate_drawings(baseline: str, p1_input: dict, p2_input: dict) -> di
     else:
         contents.append(p2_input['data'])
         
-    response = model.generate_content(contents, generation_config={"response_mime_type": "application/json"})
-    
     try:
+        c = get_client()
+        response = await c.aio.models.generate_content(
+            model='gemini-2.5-flash',
+            contents=contents,
+            config=types.GenerateContentConfig(
+                response_mime_type="application/json"
+            )
+        )
         result = json.loads(response.text)
         return result
     except Exception as e:
@@ -76,8 +91,8 @@ async def evaluate_drawings(baseline: str, p1_input: dict, p2_input: dict) -> di
             "p2_recognized": "Unknown",
             "p1_valid": False,
             "p2_valid": False,
-            "violation_reason": "AI Error",
+            "violation_reason": f"AI Error: {e}",
             "winner": "tie",
-            "explanation": "The Judge AI was confused.",
+            "explanation": "The Judge AI was confused or an error occurred.",
             "new_baseline": baseline
         }

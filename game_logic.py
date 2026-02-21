@@ -14,6 +14,7 @@ class GameRoom:
         self.p1_id = None
         self.p2_id = None
         self.submissions = {} # socket_id -> submission
+        self.ready_for_next = set() # set of socket_ids ready for next round
         self.ties_in_a_row = 0
         self.round_timer_task = None
 
@@ -74,6 +75,12 @@ class GameRoom:
             "data": data
         }
         return True
+
+    def set_ready_for_next(self, socket_id: str):
+        if self.state == "judging" or self.state == "waiting_for_next":
+            self.ready_for_next.add(socket_id)
+            return len(self.ready_for_next) == 2
+        return False
 
     def all_submitted(self):
         return len(self.submissions) == 2
@@ -139,6 +146,9 @@ class GameRoom:
             
         if game_over:
             self.state = "game_over"
+        else:
+            self.state = "waiting_for_next"
+            self.ready_for_next.clear()
             
         self.round += 1
         

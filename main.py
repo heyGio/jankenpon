@@ -101,6 +101,23 @@ async def websocket_endpoint(websocket: WebSocket, client_id: str):
                                 if room.round_timer_task:
                                     room.round_timer_task.cancel()
                                 await resolve_round(room)
+            
+            elif action == "ready_next_round":
+                room_id = player_rooms.get(client_id)
+                if room_id:
+                    room = game_manager.get_room(room_id)
+                    if room and room.state == "waiting_for_next":
+                        all_ready = room.set_ready_for_next(client_id)
+                        # Notify other player
+                        opponent_id = room.get_opponent_id(client_id)
+                        if opponent_id:
+                            await manager.send_personal_message({"type": "opponent_ready"}, opponent_id)
+                            
+                        if all_ready:
+                            # Start next round
+                            new_round_data = room.start_round()
+                            await manager.broadcast_to_room(new_round_data, room)
+                            asyncio.create_task(round_timer(room))
 
     except WebSocketDisconnect:
         manager.disconnect(client_id)
@@ -144,11 +161,5 @@ async def resolve_round(room):
     await asyncio.sleep(1) # Dramatic pause
     await manager.broadcast_to_room(result, room)
     
-    if not result.get("game_over"):
-        # Next round starts after a delay
-        await asyncio.sleep(5)
-        new_round_data = room.start_round()
-        await manager.broadcast_to_room(new_round_data, room)
-        asyncio.create_task(round_timer(room))
-    else:
+    if result.get("game_over"):
         game_manager.remove_room(room.room_id)

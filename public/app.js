@@ -23,7 +23,10 @@ const ui = {
     p2Score: document.getElementById('p2-score'),
     lobbyStatus: document.getElementById('lobby-status'),
     btnFindMatch: document.getElementById('btn-find-match'),
-    btnPlayAgain: document.getElementById('btn-play-again')
+    btnPlayAgain: document.getElementById('btn-play-again'),
+    btnNextRound: document.getElementById('btn-next-round'),
+    judgingStatus: document.getElementById('judging-status'),
+    nextRoundContainer: document.getElementById('next-round-container')
 };
 
 // Canvas Setup
@@ -144,6 +147,12 @@ ui.btnPlayAgain.addEventListener('click', () => {
     window.location.reload();
 });
 
+ui.btnNextRound.addEventListener('click', () => {
+    ws.send(JSON.stringify({ action: 'ready_next_round' }));
+    ui.btnNextRound.disabled = true;
+    ui.judgingStatus.innerText = "Waiting for Opponent...";
+});
+
 
 // WebSocket Handling
 function connectWS() {
@@ -223,6 +232,9 @@ function handleMessage(msg) {
         document.getElementById('judging-expl').innerText = "";
         document.getElementById('judge-p1-desc').innerText = "?";
         document.getElementById('judge-p2-desc').innerText = "?";
+        ui.nextRoundContainer.classList.add('hidden');
+        ui.btnNextRound.disabled = false;
+        ui.judgingStatus.innerText = "";
         switchScreen('judging');
     }
     else if (msg.type === 'round_result') {
@@ -271,6 +283,18 @@ function handleMessage(msg) {
             setTimeout(() => {
                 showGameOver(msg);
             }, 5000);
+        } else {
+            // Show Next Round Button
+            ui.nextRoundContainer.classList.remove('hidden');
+            ui.btnNextRound.disabled = false;
+            ui.judgingStatus.innerText = "";
+        }
+    }
+    else if (msg.type === 'opponent_ready') {
+        if (state === 'judging' || state === 'waiting_for_next') {
+            if (!ui.btnNextRound.disabled) {
+                ui.judgingStatus.innerText = "Opponent is ready! Click Next Round.";
+            }
         }
     }
     else if (msg.type === 'opponent_disconnected') {

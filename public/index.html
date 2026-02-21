@@ -5,7 +5,7 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Draw-kenpon | AI Drawing Battle</title>
-    <link rel="stylesheet" href="style.css">
+    <link rel="stylesheet" href="/static/style.css?v=2">
     <link href="https://fonts.googleapis.com/css2?family=Outfit:wght@300;400;600;800&display=swap" rel="stylesheet">
 </head>
 
@@ -135,6 +135,11 @@
                 </div>
                 <div class="judging-verdict" id="judging-verdict"></div>
                 <div class="judging-expl" id="judging-expl"></div>
+
+                <div id="next-round-container" class="mt-2 hidden">
+                    <button id="btn-next-round" class="btn-primary">NEXT ROUND</button>
+                    <div id="judging-status" class="status-msg"></div>
+                </div>
             </div>
         </section>
 
@@ -154,7 +159,7 @@
     </div>
 
     <!-- Main Logic -->
-    <script src="app.js"></script>
+    <script src="/static/app.js?v=2"></script>
 </body>
 
 </html>
