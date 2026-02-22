@@ -3,6 +3,8 @@
 
 A real-time multiplayer drawing game powered by Google's Gemini Vision and LLM models. Draw an object, beat the baseline, and don't escalate too fast!
 
+**Demo:** [https://jankenpon.nguyenvanloc.com/](https://jankenpon.nguyenvanloc.com/)
+
 ## Prerequisites
 - **Node.js**: v18 or newer
 - **Gemini API Key**: Grab one from [Google AI Studio](https://aistudio.google.com/)
