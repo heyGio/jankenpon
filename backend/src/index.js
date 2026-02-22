@@ -10,17 +10,20 @@ const { createMatch, getMatch } = require('./gameState');
 const app = express();
 const server = http.createServer(app);
 
-const allowedOrigins = [
-    'https://jankenpon.nguyenvanloc.com',
-    ...(process.env.CORS_ORIGIN ? process.env.CORS_ORIGIN.split(',') : [])
-].filter(Boolean);
+// Allow all origins so CORS works behind Traefik; restrict via CORS_ORIGIN if desired
+const corsOrigins = process.env.CORS_ORIGIN
+    ? process.env.CORS_ORIGIN.split(',').map((s) => s.trim())
+    : null;
 app.use(cors({
-    origin: (origin, cb) => {
-        if (!origin || allowedOrigins.includes(origin)) return cb(null, true);
-        return cb(null, false);
-    },
-    methods: ['GET', 'POST', 'OPTIONS'],
-    credentials: true
+    origin: corsOrigins
+        ? (origin, cb) => {
+            if (!origin || corsOrigins.includes(origin)) return cb(null, true);
+            return cb(null, false);
+        }
+        : true,
+    methods: ['GET', 'POST', 'PUT', 'PATCH', 'DELETE', 'OPTIONS'],
+    allowedHeaders: ['Content-Type', 'Authorization'],
+    credentials: false
 }));
 app.use(express.json());
 
