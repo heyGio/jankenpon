@@ -1,0 +1,40 @@
+services:
+  backend:
+    build: ./backend
+    image: vanloc1808/jankenpon-backend:latest
+    container_name: jankenpon-backend
+    env_file:
+      - ./backend/.env
+    restart: always
+    labels:
+      - "traefik.enable=true"
+      - "traefik.http.routers.jankenpon-backend.rule=Host(`backend-jankenpon.nguyenvanloc.com`)"
+      - "traefik.http.routers.jankenpon-backend.entrypoints=websecure"
+      - "traefik.http.routers.jankenpon-backend.tls=true"
+      - "traefik.http.services.jankenpon-backend.loadbalancer.server.port=3001"
+    networks:
+      - localnet
+
+  frontend:
+    build:
+      context: ./frontend
+      dockerfile: Dockerfile
+      args:
+        VITE_BACKEND_URL: https://backend-jankenpon.nguyenvanloc.com
+    image: vanloc1808/jankenpon-frontend:latest
+    container_name: jankenpon-frontend
+    restart: always
+    env_file:
+      - ./frontend/.env
+    labels:
+      - "traefik.enable=true"
+      - "traefik.http.routers.jankenpon-frontend.rule=Host(`jankenpon.nguyenvanloc.com`)"
+      - "traefik.http.routers.jankenpon-frontend.entrypoints=websecure"
+      - "traefik.http.routers.jankenpon-frontend.tls=true"
+      - "traefik.http.services.jankenpon-frontend.loadbalancer.server.port=80"
+    networks:
+      - localnet
+
+networks:
+  localnet:
+    external: true
