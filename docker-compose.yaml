@@ -13,6 +13,7 @@ services:
       - "traefik.http.routers.jankenpon-backend.tls=true"
       - "traefik.http.routers.jankenpon-backend.middlewares=jankenpon-cors@docker"
       - "traefik.http.services.jankenpon-backend.loadbalancer.server.port=3001"
+      - "traefik.http.routers.jankenpon-backend.tls.certresolver=le"
       # CORS headers added at proxy so browser always receives them
       - "traefik.http.middlewares.jankenpon-cors.headers.customresponseheaders.Access-Control-Allow-Origin=https://jankenpon.nguyenvanloc.com"
       - "traefik.http.middlewares.jankenpon-cors.headers.customresponseheaders.Access-Control-Allow-Methods=GET, POST, PUT, PATCH, DELETE, OPTIONS"
@@ -37,6 +38,7 @@ services:
       - "traefik.http.routers.jankenpon-frontend.rule=Host(`jankenpon.nguyenvanloc.com`)"
       - "traefik.http.routers.jankenpon-frontend.entrypoints=websecure"
       - "traefik.http.routers.jankenpon-frontend.tls=true"
+      - "traefik.http.routers.jankenpon-frontend.tls.certresolver=le"
       - "traefik.http.services.jankenpon-frontend.loadbalancer.server.port=80"
     networks:
       - localnet
